@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * The persistent class for the data_sources database table.
  */
@@ -17,94 +16,92 @@ import java.util.List;
 @Table(name = "data_sources")
 @NamedQuery(name = "DataSource.findAll", query = "SELECT d FROM DataSource d")
 public class DataSource implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(length = 45)
-    private String name;
+	@Id
+	@Column(length = 45)
+	private String name;
+	/*
+	 * @Column(name = "CURRENT_OFFSET") private long currentOffset;
+	 */
+	private long total;
 
-    @Column(name = "CURRENT_OFFSET")
-    private long currentOffset;
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATE_DATE")
+	private Date createDate;
 
-    private long total;
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "MODIFY_DATE")
+	private Date modifyDate;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CREATE_DATE")
-    private Date createDate;
+	// bi-directional many-to-one association to Post
+	@OneToMany(mappedBy = "dataSource")
+	@JsonIgnore
+	private List<Post> posts;
 
-    @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "MODIFY_DATE")
-    private Date modifyDate;
+	public DataSource() {
+	}
 
-    //bi-directional many-to-one association to Post
-    @OneToMany(mappedBy = "dataSource")
-    @JsonIgnore
-    private List<Post> posts;
+	public String getName() {
+		return this.name;
+	}
 
-    public DataSource() {
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	/*
+	 * public long getCurrentOffset() { return this.currentOffset; }
+	 * 
+	 * public void setCurrentOffset(long currentOffset) { this.currentOffset =
+	 * currentOffset; }
+	 */
+	
+	public long getTotal() {
+		return this.total;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setTotal(long total) {
+		this.total = total;
+	}
 
-    public long getCurrentOffset() {
-        return this.currentOffset;
-    }
+	public List<Post> getPosts() {
+		return this.posts;
+	}
 
-    public void setCurrentOffset(long currentOffset) {
-        this.currentOffset = currentOffset;
-    }
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
 
-    public long getTotal() {
-        return this.total;
-    }
+	public Post addPost(Post post) {
+		getPosts().add(post);
+		post.setDataSource(this);
 
-    public void setTotal(long total) {
-        this.total = total;
-    }
+		return post;
+	}
 
-    public List<Post> getPosts() {
-        return this.posts;
-    }
+	public Post removePost(Post post) {
+		getPosts().remove(post);
+		post.setDataSource(null);
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
+		return post;
+	}
 
-    public Post addPost(Post post) {
-        getPosts().add(post);
-        post.setDataSource(this);
+	public Date getCreateDate() {
+		return createDate;
+	}
 
-        return post;
-    }
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
-    public Post removePost(Post post) {
-        getPosts().remove(post);
-        post.setDataSource(null);
+	public Date getModifyDate() {
+		return modifyDate;
+	}
 
-        return post;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(Date modifyDate) {
-        this.modifyDate = modifyDate;
-    }
+	public void setModifyDate(Date modifyDate) {
+		this.modifyDate = modifyDate;
+	}
 }

@@ -19,7 +19,7 @@ public class DataSourceConfig implements CommandLineRunner {
             // Add HAL API to resource entry
             DataSource halDataSource = new DataSource();
             halDataSource.setName(DataSourceService.SOURCE_HAL);
-            halDataSource.setCurrentOffset(0);
+            //halDataSource.setCurrentOffset(0);
             halDataSource.setTotal(0);
             dataSourceService.saveDataSource(halDataSource);
         }
@@ -28,7 +28,7 @@ public class DataSourceConfig implements CommandLineRunner {
             // Add E print to resource entry
             DataSource ePrintDataSource = new DataSource();
             ePrintDataSource.setName(DataSourceService.SOURCE_EPRINT);
-            ePrintDataSource.setCurrentOffset(0);
+            //ePrintDataSource.setCurrentOffset(0);
             ePrintDataSource.setTotal(0);
             dataSourceService.saveDataSource(ePrintDataSource);
         }

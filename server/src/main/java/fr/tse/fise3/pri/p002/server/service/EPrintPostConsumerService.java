@@ -39,7 +39,7 @@ public class EPrintPostConsumerService implements Runnable {
 
     private void updateEPrintOffset(int value) {
         DataSource ePrintDataSource = dataSourceService.getEPrintDataSource();
-        ePrintDataSource.setCurrentOffset(value);
+        //ePrintDataSource.setCurrentOffset(value);
         dataSourceService.saveDataSource(ePrintDataSource);
     }
 
