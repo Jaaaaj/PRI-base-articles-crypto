@@ -7,7 +7,6 @@ import fr.tse.fise3.pri.p002.server.model.DataSource;
 public class DataSourceDTO {
 	private long total;
 	// private long currentOffset;
-	// private Integer mostRecentRequestYear;
 	private boolean status;
 	private Date createDate;
 	private Date modifyDate;

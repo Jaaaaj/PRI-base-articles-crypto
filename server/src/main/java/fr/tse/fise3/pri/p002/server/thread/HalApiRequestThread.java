@@ -37,10 +37,7 @@ public class HalApiRequestThread implements Runnable {
 	private static boolean running = false;
 	private final OkHttpClient okHttpClient;
 	private Integer lastRequestYear;
-	/*
-	 * private long start = 0; // Offset (indice de début de la recherche) private
-	 * long rows = 10000; // Length (nombre de resultats a retourner)
-	 */
+	long rows = 100; 		// Nombre de résultats retournes par un appel a l'API
 	private long total;
 
 	@Autowired
@@ -85,45 +82,55 @@ public class HalApiRequestThread implements Runnable {
 
 		if (halDataSource.getCreateDate().equals(halDataSource.getModifyDate())) {
 			// Si le programme n'a jamais tourne
-			this.lastRequestYear = 1800;
+			this.lastRequestYear = 0;
 		} else {
 			// Sinon on recupere la derniere date d'utilisation
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(halDataSource.getModifyDate());
 			this.lastRequestYear = cal.get(Calendar.YEAR);
 		}
-		
+
 		System.out.println(this.lastRequestYear);
 
 		try {
 
-			// do {
-			/*
-			 * String response = doRequest(
-			 * "https://api.archives-ouvertes.fr/search?q=code-based&&cryptography&wt=json&fl=uri_s,label_s,"
-			 * +
-			 * "title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&"
-			 * ); //+ "sort=docid%20asc&start=" + start + "&rows=" + rows);
-			 */
+			Long nbResponses = (long) 0;
+			Long totalResponses = (long) 0;
+			Long existingPosts = (long) 0;
 
-			String response = this.doRequest(
-					"https://api.archives-ouvertes.fr/search?q=\"code-based cryptography\"~2&fl=uri_s,label_s,title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&fq=submittedDateY_i:["
-							+ this.lastRequestYear + " TO *]");
+			do {
+				/*
+				 * String response = doRequest(
+				 * "https://api.archives-ouvertes.fr/search?q=code-based&&cryptography&wt=json&fl=uri_s,label_s,"
+				 * +
+				 * "title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&"
+				 * ); //+ "sort=docid%20asc&start=" + start + "&rows=" + rows);
+				 */
 
-			ObjectMapper objectMapper = new ObjectMapper();
-			HalApiResponse halApiResponse = objectMapper.readValue(response, HalApiResponse.class);
+				String response = this.doRequest(
+						"https://api.archives-ouvertes.fr/search?q=\"code-based cryptography\"~2&fl=uri_s,label_s,title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&fq=submittedDateY_i:["
+								+ this.lastRequestYear + " TO *]&rows=" + rows + "&start=" + nbResponses);
 
-			for (HalApiDoc halApiDoc : halApiResponse.getResponse().getDocs()) {
-				saveHalApiDoc(halApiDoc);
-			}
+				ObjectMapper objectMapper = new ObjectMapper();
+				HalApiResponse halApiResponse = objectMapper.readValue(response, HalApiResponse.class);
 
-			total += halApiResponse.getResponse().getNumFound();
-			// start = halApiResponse.getResponse().getStart() + rows;
+				System.out.println(halApiResponse.getResponse().getDocs().size());
 
-			System.out.println("NUMBER OF NEW ARTICLES FOUND : " + halApiResponse.getResponse().getNumFound());
-			this.updateHalDataSource(halApiResponse.getResponse().getNumFound());
+				totalResponses = halApiResponse.getResponse().getNumFound();
 
-			// } while (start < total);
+				for (HalApiDoc halApiDoc : halApiResponse.getResponse().getDocs()) {
+					existingPosts += saveHalApiDoc(halApiDoc);
+				}
+
+				nbResponses += rows;
+
+				// start = halApiResponse.getResponse().getStart() + rows;
+
+			} while (totalResponses > nbResponses);
+
+			System.out.println("NEW ARTICLES FOUND --> " + (totalResponses - existingPosts));
+
+			this.updateHalDataSource(halDataSource.getTotal() + totalResponses - existingPosts);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -132,12 +139,12 @@ public class HalApiRequestThread implements Runnable {
 		}
 	}
 
-	private void saveHalApiDoc(HalApiDoc halApiDoc) {
+	private Integer saveHalApiDoc(HalApiDoc halApiDoc) {
 		Post post = new Post();
 
 		if (postService.postExistsByUrl(halApiDoc.getUri_s())) {
 			System.out.println("POST_ALREADY_EXISTS_BY_URL");
-			return;
+			return 1;
 		}
 
 		post.setTitle(halApiDoc.getTitle_s().get(0));
@@ -170,6 +177,8 @@ public class HalApiRequestThread implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		return 0;
 	}
 
 	private void updateHalDataSource(long total) {
@@ -177,6 +186,7 @@ public class HalApiRequestThread implements Runnable {
 		halDataSource.setTotal(total);
 		// halDataSource.setCurrentOffset(offset);
 		dataSourceService.saveDataSource(halDataSource);
+
 	}
 
 }
