@@ -5,8 +5,8 @@ import fr.tse.fise3.pri.p002.server.model.Author;
 import fr.tse.fise3.pri.p002.server.model.DataSource;
 import fr.tse.fise3.pri.p002.server.model.Keyword;
 import fr.tse.fise3.pri.p002.server.model.Post;
-import fr.tse.fise3.pri.p002.server.pojo.HalApiDoc;
-import fr.tse.fise3.pri.p002.server.pojo.HalApiResponse;
+import fr.tse.fise3.pri.p002.server.pojo.HalApi.HalApiDoc;
+import fr.tse.fise3.pri.p002.server.pojo.HalApi.HalApiResponse;
 import fr.tse.fise3.pri.p002.server.service.AuthorService;
 import fr.tse.fise3.pri.p002.server.service.DataSourceService;
 import fr.tse.fise3.pri.p002.server.service.KeywordService;
@@ -36,9 +36,8 @@ public class HalApiRequestThread implements Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HalApiRequestThread.class);
 	private static boolean running = false;
 	private final OkHttpClient okHttpClient;
-	private Integer lastRequestYear;
-	long rows = 100; 		// Nombre de résultats retournes par un appel a l'API
-	private long total;
+	private Integer lastRequestYear; // Annee de la derniere requete qu'on a faite
+	long rows = 100; // Nombre de résultats retournes par un appel a l'API
 
 	@Autowired
 	private PostService postService;
@@ -78,8 +77,6 @@ public class HalApiRequestThread implements Runnable {
 		// Innit
 		DataSource halDataSource = dataSourceService.getHalDataSource();
 
-		this.total = halDataSource.getTotal();
-
 		if (halDataSource.getCreateDate().equals(halDataSource.getModifyDate())) {
 			// Si le programme n'a jamais tourne
 			this.lastRequestYear = 0;
@@ -99,16 +96,9 @@ public class HalApiRequestThread implements Runnable {
 			Long existingPosts = (long) 0;
 
 			do {
-				/*
-				 * String response = doRequest(
-				 * "https://api.archives-ouvertes.fr/search?q=code-based&&cryptography&wt=json&fl=uri_s,label_s,"
-				 * +
-				 * "title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&"
-				 * ); //+ "sort=docid%20asc&start=" + start + "&rows=" + rows);
-				 */
 
 				String response = this.doRequest(
-						"https://api.archives-ouvertes.fr/search?q=\"code-based cryptography\"~2&fl=uri_s,label_s,title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&fq=submittedDateY_i:["
+						"https://api.archives-ouvertes.fr/search?q=\"code-based cryptography\"~2&fl=uri_s,label_s,title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate,journalTitle_s&fq=submittedDateY_i:["
 								+ this.lastRequestYear + " TO *]&rows=" + rows + "&start=" + nbResponses);
 
 				ObjectMapper objectMapper = new ObjectMapper();
@@ -170,8 +160,18 @@ public class HalApiRequestThread implements Runnable {
 			}
 			post.setKeywords(new ArrayList<>(keywordsMap.values()));
 		}
+
 		post.setDataSource(dataSourceService.findByName(DataSourceService.SOURCE_HAL)
 				.orElseThrow(() -> new ResourceNotFoundException("Hal source doesn't exist")));
+
+		if (halApiDoc.getAbstract_s() != null) {
+			post.setAbstract(halApiDoc.getAbstract_s().get(0));
+		}
+		
+		if(halApiDoc.getBookTitle_s() == null) {
+			
+		}
+		
 		try {
 			postService.savePost(post);
 		} catch (Exception e) {

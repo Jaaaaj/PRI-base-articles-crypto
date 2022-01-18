@@ -1,4 +1,4 @@
-package fr.tse.fise3.pri.p002.server.pojo;
+package fr.tse.fise3.pri.p002.server.pojo.HalApi;
 
 public class HalApiResponse {
 
