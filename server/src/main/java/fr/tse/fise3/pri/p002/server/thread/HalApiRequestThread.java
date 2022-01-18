@@ -22,171 +22,192 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Scope("prototype")
 public class HalApiRequestThread implements Runnable {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(HalApiRequestThread.class);
-	private static boolean running = false;
-	private final OkHttpClient okHttpClient;
-	private Integer lastRequestYear; // Annee de la derniere requete qu'on a faite
-	long rows = 100; // Nombre de résultats retournes par un appel a l'API
+    private static final Logger LOGGER = LoggerFactory.getLogger(HalApiRequestThread.class);
+    private static boolean running = false;
+    private final OkHttpClient okHttpClient;
+    private Integer lastRequestYear;
+    long rows = 100;        // Nombre de résultats retournes par un appel a l'API
 
-	@Autowired
-	private PostService postService;
+    @Autowired
+    private PostService postService;
 
-	@Autowired
-	private AuthorService authorService;
+    @Autowired
+    private AuthorService authorService;
 
-	@Autowired
-	private KeywordService keywordService;
+    @Autowired
+    private KeywordService keywordService;
 
-	@Autowired
-	private DataSourceService dataSourceService;
+    @Autowired
+    private DataSourceService dataSourceService;
 
-	public HalApiRequestThread() {
-		this.okHttpClient = new OkHttpClient();
-	}
+    public HalApiRequestThread() {
+        this.okHttpClient = new OkHttpClient();
+    }
 
-	public static boolean isRunning() {
-		return running;
-	}
+    public static boolean isRunning() {
+        return running;
+    }
 
-	public static void setRunning(boolean running) {
-		HalApiRequestThread.running = running;
-	}
+    public static void setRunning(boolean running) {
+        HalApiRequestThread.running = running;
+    }
 
-	private String doRequest(String url) throws IOException {
-		Request request = new Request.Builder().url(url).build();
-		try (Response response = okHttpClient.newCall(request).execute()) {
-			return response.body().string();
-		}
-	}
+    private String doRequest(String url) throws IOException {
+        Request request = new Request.Builder().url(url).build();
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }
 
-	@Override
-	public void run() {
-		running = true;
+    private String readFromInputStream(InputStream inputStream)
+            throws IOException {
+        StringBuilder resultStringBuilder = new StringBuilder();
+        try (BufferedReader br
+                     = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                resultStringBuilder.append(line).append("\n");
+            }
+        }
+        return resultStringBuilder.toString();
+    }
 
-		// Innit
-		DataSource halDataSource = dataSourceService.getHalDataSource();
+    @Override
+    public void run() {
+        running = true;
 
-		if (halDataSource.getCreateDate().equals(halDataSource.getModifyDate())) {
-			// Si le programme n'a jamais tourne
-			this.lastRequestYear = 0;
-		} else {
-			// Sinon on recupere la derniere date d'utilisation
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(halDataSource.getModifyDate());
-			this.lastRequestYear = cal.get(Calendar.YEAR);
-		}
+        // Innit
+        DataSource halDataSource = dataSourceService.getHalDataSource();
 
-		System.out.println(this.lastRequestYear);
+        if (halDataSource.getCreateDate().equals(halDataSource.getModifyDate())) {
+            // Si le programme n'a jamais tourne
+            this.lastRequestYear = 0;
+        } else {
+            // Sinon on recupere la derniere date d'utilisation
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(halDataSource.getModifyDate());
+            this.lastRequestYear = cal.get(Calendar.YEAR);
+        }
 
-		try {
+        System.out.println(this.lastRequestYear);
 
-			Long nbResponses = (long) 0;
-			Long totalResponses = (long) 0;
-			Long existingPosts = (long) 0;
+        String[] keyword_list = new String[0];
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream("keywords.txt");
+        try {
+            String keywords = readFromInputStream(inputStream);
+            keyword_list = keywords.replaceAll(",", "").split("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-			do {
+        for (String keyword : keyword_list) {
+            try {
 
-				String response = this.doRequest(
-						"https://api.archives-ouvertes.fr/search?q=\"code-based cryptography\"~2&fl=uri_s,label_s,title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate,journalTitle_s&fq=submittedDateY_i:["
-								+ this.lastRequestYear + " TO *]&rows=" + rows + "&start=" + nbResponses);
+                Long nbResponses = (long) 0;
+                Long totalResponses = (long) 0;
+                Long existingPosts = (long) 0;
 
-				ObjectMapper objectMapper = new ObjectMapper();
-				HalApiResponse halApiResponse = objectMapper.readValue(response, HalApiResponse.class);
+                do {
 
-				System.out.println(halApiResponse.getResponse().getDocs().size());
+                    System.out.println(keyword);
+                    String response = this.doRequest(
+                            "https://api.archives-ouvertes.fr/search?q="+keyword+"~2&fl=uri_s,label_s,title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&fq=submittedDateY_i:["
+                                    + this.lastRequestYear + " TO *]&rows=" + rows + "&start=" + nbResponses);
 
-				totalResponses = halApiResponse.getResponse().getNumFound();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    HalApiResponse halApiResponse = objectMapper.readValue(response, HalApiResponse.class);
 
-				for (HalApiDoc halApiDoc : halApiResponse.getResponse().getDocs()) {
-					existingPosts += saveHalApiDoc(halApiDoc);
-				}
+                    System.out.println(halApiResponse.getResponse().getDocs().size());
 
-				nbResponses += rows;
+                    totalResponses = halApiResponse.getResponse().getNumFound();
 
-				// start = halApiResponse.getResponse().getStart() + rows;
+                    for (HalApiDoc halApiDoc : halApiResponse.getResponse().getDocs()) {
+                        existingPosts += saveHalApiDoc(halApiDoc);
+                    }
 
-			} while (totalResponses > nbResponses);
+                    nbResponses += rows;
 
-			System.out.println("NEW ARTICLES FOUND --> " + (totalResponses - existingPosts));
+                    // start = halApiResponse.getResponse().getStart() + rows;
 
-			this.updateHalDataSource(halDataSource.getTotal() + totalResponses - existingPosts);
+                } while (totalResponses > nbResponses);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			running = false;
-		}
-	}
+                System.out.println("NEW ARTICLES FOUND --> " + (totalResponses - existingPosts));
 
-	private Integer saveHalApiDoc(HalApiDoc halApiDoc) {
-		Post post = new Post();
+                this.updateHalDataSource(halDataSource.getTotal() + totalResponses - existingPosts);
 
-		if (postService.postExistsByUrl(halApiDoc.getUri_s())) {
-			System.out.println("POST_ALREADY_EXISTS_BY_URL");
-			return 1;
-		}
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                running = false;
+            }
+        }
+    }
 
-		post.setTitle(halApiDoc.getTitle_s().get(0));
-		post.setDate(halApiDoc.getSubmittedDate_tdate());
-		post.setUrl(halApiDoc.getUri_s());
+    private Integer saveHalApiDoc(HalApiDoc halApiDoc) {
+        Post post = new Post();
 
-		if (halApiDoc.getAuthAlphaLastNameFirstNameIdHal_fs() != null) {
-			Map<BigInteger, Author> authorsMap = new HashMap<>();
-			for (String authorString : halApiDoc.getAuthAlphaLastNameFirstNameIdHal_fs()) {
-				authorString = StringUtils.substringAfter(authorString, "AlphaSep_");
-				authorString = StringUtils.substringBefore(authorString, "_FacetSep");
-				Author author = authorService.findOrCreateByName(authorString);
-				authorsMap.put(author.getAuthorId(), author);
-			}
-			post.setAuthors(new ArrayList<>(authorsMap.values()));
-		}
+        if (postService.postExistsByUrl(halApiDoc.getUri_s())) {
+            System.out.println("POST_ALREADY_EXISTS_BY_URL");
+            return 1;
+        }
 
-		if (halApiDoc.getKeyword_s() != null) {
-			Map<BigInteger, Keyword> keywordsMap = new HashMap<>();
-			for (String keywordString : halApiDoc.getKeyword_s()) {
-				Keyword keyword = keywordService.findOrCreateByName(keywordString);
-				keywordsMap.put(keyword.getKeywordId(), keyword);
-			}
-			post.setKeywords(new ArrayList<>(keywordsMap.values()));
-		}
+        post.setTitle(halApiDoc.getTitle_s().get(0));
+        post.setDate(halApiDoc.getSubmittedDate_tdate());
+        post.setUrl(halApiDoc.getUri_s());
 
-		post.setDataSource(dataSourceService.findByName(DataSourceService.SOURCE_HAL)
-				.orElseThrow(() -> new ResourceNotFoundException("Hal source doesn't exist")));
+        if (halApiDoc.getAuthAlphaLastNameFirstNameIdHal_fs() != null) {
+            Map<BigInteger, Author> authorsMap = new HashMap<>();
+            for (String authorString : halApiDoc.getAuthAlphaLastNameFirstNameIdHal_fs()) {
+                authorString = StringUtils.substringAfter(authorString, "AlphaSep_");
+                authorString = StringUtils.substringBefore(authorString, "_FacetSep");
+                Author author = authorService.findOrCreateByName(authorString);
+                authorsMap.put(author.getAuthorId(), author);
+            }
+            post.setAuthors(new ArrayList<>(authorsMap.values()));
+        }
 
-		if (halApiDoc.getAbstract_s() != null) {
+        if (halApiDoc.getKeyword_s() != null) {
+            Map<BigInteger, Keyword> keywordsMap = new HashMap<>();
+            for (String keywordString : halApiDoc.getKeyword_s()) {
+                Keyword keyword = keywordService.findOrCreateByName(keywordString);
+                keywordsMap.put(keyword.getKeywordId(), keyword);
+            }
+            post.setKeywords(new ArrayList<>(keywordsMap.values()));
+        }
+
+        if (halApiDoc.getAbstract_s() != null) {
 			post.setAbstract(halApiDoc.getAbstract_s().get(0));
 		}
-		
-		if(halApiDoc.getBookTitle_s() == null) {
-			
-		}
-		
-		try {
-			postService.savePost(post);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        
+        post.setDataSource(dataSourceService.findByName(DataSourceService.SOURCE_HAL)
+                .orElseThrow(() -> new ResourceNotFoundException("Hal source doesn't exist")));
+        try {
+            postService.savePost(post);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	private void updateHalDataSource(long total) {
-		DataSource halDataSource = dataSourceService.getHalDataSource();
-		halDataSource.setTotal(total);
-		// halDataSource.setCurrentOffset(offset);
-		dataSourceService.saveDataSource(halDataSource);
+    private void updateHalDataSource(long total) {
+        DataSource halDataSource = dataSourceService.getHalDataSource();
+        halDataSource.setTotal(total);
+        // halDataSource.setCurrentOffset(offset);
+        dataSourceService.saveDataSource(halDataSource);
 
-	}
+    }
 
 }

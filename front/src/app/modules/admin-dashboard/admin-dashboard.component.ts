@@ -26,15 +26,21 @@ export class AdminDashboardComponent implements OnInit {
         console.error(error);
       });
 
-    this.httpClient.get('/api/eprint/info').subscribe(
-      (response: DataSourceInfoModel) => {
-        this.eprintInfo = response;
-        console.log(response);
+    // this.httpClient.get('/api/eprint/info').subscribe(
+    //   (response: DataSourceInfoModel) => {
+    //     this.eprintInfo = response;
+    //     console.log(response);
 
-      }, (error) => {
-        // handle error
-        console.error(error);
-      });
+    //   }, (error) => {
+    //     // handle error
+    //     console.error(error);
+    //   });
+  }
+
+
+  start() {
+    this.httpClient.get('http://localhost:4200/api/start', { responseType: 'text' })
+      .subscribe(data => console.log(data))
   }
 
 }

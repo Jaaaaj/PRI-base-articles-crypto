@@ -24,6 +24,7 @@ public class DataSourceDTO {
 		this.status = status;
 		this.createDate = data.getCreateDate();
 		this.modifyDate = data.getModifyDate();
+		this.total = data.getTotal();
 	}
 
 	public Date getCreateDate() {
