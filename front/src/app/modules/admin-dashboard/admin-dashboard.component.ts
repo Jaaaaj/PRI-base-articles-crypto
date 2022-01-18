@@ -43,4 +43,10 @@ export class AdminDashboardComponent implements OnInit {
       .subscribe(data => console.log(data))
   }
 
+  delete() {
+    this.httpClient.delete('http://localhost:4200/api/delete', { responseType: 'text' })
+      .subscribe(data => console.log(data))
+
+  }
+
 }

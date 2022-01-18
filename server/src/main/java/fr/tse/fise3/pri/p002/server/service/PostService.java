@@ -51,4 +51,9 @@ public class PostService {
     public Page<Post> findByAuthors_authorNameContaining(String name, Pageable pageable) {
         return postRepository.findByAuthors_authorNameContaining(name, pageable);
     }
+
+    public String deleteAll(){
+        postRepository.deleteAll();
+        return "Deleted All Posts";
+    }
 }

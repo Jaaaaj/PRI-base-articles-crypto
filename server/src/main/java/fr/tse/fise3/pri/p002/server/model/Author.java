@@ -24,7 +24,7 @@ public class Author implements Serializable {
     private String authorName;
 
     //bi-directional many-to-many association to Post
-    @ManyToMany(mappedBy = "authors")
+    @ManyToMany(mappedBy = "authors", cascade = CascadeType.REMOVE)
     private List<Post> posts;
 
     public Author() {

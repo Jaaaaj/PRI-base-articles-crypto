@@ -144,7 +144,8 @@ public class HalApiRequestThread implements Runnable {
                 } while (totalResponses > nbResponses);
 
                 System.out.println("NEW ARTICLES FOUND --> " + (totalResponses - existingPosts));
-
+                halDataSource = dataSourceService.getHalDataSource();
+                System.out.println(halDataSource.getTotal() + totalResponses - existingPosts);
                 this.updateHalDataSource(halDataSource.getTotal() + totalResponses - existingPosts);
 
             } catch (Exception e) {

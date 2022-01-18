@@ -1,5 +1,7 @@
 package fr.tse.fise3.pri.p002.server.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -39,6 +41,8 @@ public class Post implements Serializable {
 	@Column(columnDefinition = "LONGTEXT")
 	private String abstract_;
 
+
+
 	// bi-directional many-to-many association to Author
 	@ManyToMany
 	@JoinTable(name = "posts_authors", joinColumns = { @JoinColumn(name = "POST_ID") }, inverseJoinColumns = {
@@ -46,13 +50,13 @@ public class Post implements Serializable {
 	private List<Author> authors;
 
 	// bi-directional many-to-many association to Category
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.REMOVE)
 	@JoinTable(name = "posts_catergories", joinColumns = { @JoinColumn(name = "POST_ID") }, inverseJoinColumns = {
 			@JoinColumn(name = "CATEGORY_ID") })
 	private List<Category> categories;
 
 	// bi-directional many-to-many association to Keyword
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.REMOVE)
 	@JoinTable(name = "posts_keywords", joinColumns = { @JoinColumn(name = "POST_ID") }, inverseJoinColumns = {
 			@JoinColumn(name = "KEYWORD_ID") })
 	private List<Keyword> keywords;
