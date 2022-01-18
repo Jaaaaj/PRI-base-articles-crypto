@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -121,7 +122,7 @@ public class HalApiRequestThread implements Runnable {
 
                 do {
 
-                    System.out.println(keyword);
+                    System.out.println("HAL - " + keyword);
                     String response = this.doRequest(
                             "https://api.archives-ouvertes.fr/search?q="+keyword+"~2&fl=uri_s,label_s,title_s,authEmail_s,abstract_s,keyword_s,authAlphaLastNameFirstNameIdHal_fs,submittedDate_tdate&fq=submittedDateY_i:["
                                     + this.lastRequestYear + " TO *]&rows=" + rows + "&start=" + nbResponses);
@@ -158,8 +159,8 @@ public class HalApiRequestThread implements Runnable {
     private Integer saveHalApiDoc(HalApiDoc halApiDoc) {
         Post post = new Post();
 
-        if (postService.postExistsByUrl(halApiDoc.getUri_s())) {
-            System.out.println("POST_ALREADY_EXISTS_BY_URL");
+        if (this.postService.findPostByTitleLike(halApiDoc.getTitle_s().get(0) , PageRequest.of(1, 10)).getTotalElements() > 0) {
+            System.out.println("POST_ALREADY_EXISTS_BY_TITLE");
             return 1;
         }
 

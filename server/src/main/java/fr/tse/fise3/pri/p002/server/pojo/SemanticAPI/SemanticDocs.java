@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SemanticDocs {
 
+	private String paperId;
 	private String url;
 	private String title;
 	private String abstract_;
@@ -26,6 +27,14 @@ public class SemanticDocs {
 		this.venue = venue;
 		this.year = year;
 		this.authors = authors;
+	}
+
+	public String getPaperId() {
+		return paperId;
+	}
+
+	public void setPaperId(String paperId) {
+		this.paperId = paperId;
 	}
 
 	public String getUrl() {

@@ -30,16 +30,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class HomeController {
-
-	@Autowired
-	private EPrintPostProducerService EPrintPostProducerService;
-	@Autowired
-	private EPrintPostConsumerService EPrintPostConsumerService;
+	/*
+	 * @Autowired private EPrintPostProducerService EPrintPostProducerService;
+	 * 
+	 * @Autowired private EPrintPostConsumerService EPrintPostConsumerService;
+	 */
 	private ModelMapper modelMapper = new ModelMapper();
 	@Autowired
 	private PostService postService;
 	@Autowired
 	private HalApiService halApiService;
+	@Autowired
+	private SemanticApiService semanticApiService;
 	@Autowired
 	private DataSourceService dataSourceService;
 
@@ -88,19 +90,7 @@ public class HomeController {
 
 	@GetMapping("/hal/info")
 	public DataSourceDTO getHalSourceInfo() {
-
 		DataSource halDataSource = dataSourceService.getHalDataSource();
-		/*
-		 * DataSourceDTO dataSourceDTO = new DataSourceDTO();
-		 * 
-		 * dataSourceDTO.setTotal(halDataSource.getTotal());
-		 * dataSourceDTO.setCurrentOffset(halDataSource.getCurrentOffset());
-		 * 
-		 * dataSourceDTO.setCreateDate(halDataSource.getCreateDate());
-		 * dataSourceDTO.setModifyDate(halDataSource.getModifyDate());
-		 * 
-		 * dataSourceDTO.setStatus(HalApiRequestThread.isRunning());
-		 */
 		return new DataSourceDTO(halDataSource, HalApiRequestThread.isRunning());
 	}
 
@@ -128,6 +118,7 @@ public class HomeController {
 			// Thread postConsumerThread = new Thread(EPrintPostConsumerService);
 			// postProducerThread.start();
 			// postConsumerThread.start();
+			this.semanticApiService.start();
 			halApiService.start();
 			return "Start";
 

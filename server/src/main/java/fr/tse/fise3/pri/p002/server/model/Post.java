@@ -65,6 +65,18 @@ public class Post implements Serializable {
 	public Post() {
 	}
 
+	public Post(String bookTitle, Date date, String title, String url, String abstract_, List<Author> authors,
+			DataSource dataSource) {
+		super();
+		this.bookTitle = bookTitle;
+		this.date = date;
+		this.title = title;
+		this.url = url;
+		this.abstract_ = abstract_;
+		this.authors = authors;
+		this.dataSource = dataSource;
+	}
+
 	public BigInteger getPostId() {
 		return this.postId;
 	}
