@@ -4,15 +4,19 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Objet qui permet de recuperer un article au format retourne par l'API de
+ * Semantic Scholar.
+ */
 public class SemanticDocs {
 
-	private String paperId;
-	private String url;
-	private String title;
-	private String abstract_;
-	private String venue;
-	private Integer year;
-	private List<SemanticAuthor> authors;
+	private String paperId; // Id de l'article
+	private String url; // Url pour acceder a l'article
+	private String title; // Titre
+	private String abstract_; // Resume
+	private String venue; // Source
+	private Integer year; // Annee de publication
+	private List<SemanticAuthor> authors; // Liste des auteurs
 
 	public SemanticDocs() {
 

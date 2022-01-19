@@ -52,13 +52,6 @@ public class DataSource implements Serializable {
 		this.name = name;
 	}
 
-	/*
-	 * public long getCurrentOffset() { return this.currentOffset; }
-	 * 
-	 * public void setCurrentOffset(long currentOffset) { this.currentOffset =
-	 * currentOffset; }
-	 */
-	
 	public long getTotal() {
 		return this.total;
 	}

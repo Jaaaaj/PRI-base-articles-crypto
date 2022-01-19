@@ -5,31 +5,29 @@ import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.List;
 
-
 /**
  * The persistent class for the keywords database table.
- * 
  */
 @Entity
-@Table(name="keywords")
-@NamedQuery(name="Keyword.findAll", query="SELECT k FROM Keyword k")
+@Table(name = "keywords")
+@NamedQuery(name = "Keyword.findAll", query = "SELECT k FROM Keyword k")
 public class Keyword implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="KEYWORD_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "KEYWORD_ID")
 	private BigInteger keywordId;
 
-	@Column(name="KEYWORD_NAME",columnDefinition="LONGTEXT")
+	@Column(name = "KEYWORD_NAME", columnDefinition = "LONGTEXT")
 	private String keywordName;
 
 	private int reserved;
 
 	private String word;
 
-	//bi-directional many-to-many association to Post
-	@ManyToMany(mappedBy="keywords")
+	// bi-directional many-to-many association to Post
+	@ManyToMany(mappedBy = "keywords")
 	private List<Post> posts;
 
 	public Keyword() {

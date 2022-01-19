@@ -6,6 +6,9 @@ import java.util.List;
 
 import fr.tse.fise3.pri.p002.server.model.Post;
 
+/**
+ * Data Transfert Object de notre classe Post
+ */
 public class PostDTO {
 
 	private String address;

@@ -1,6 +1,0 @@
-Flask, Rest API (PYTHON) communication par pipeline
-word2vec
-glov
-fasttet
-dic2vec
-systeme de suggestion (perpective)

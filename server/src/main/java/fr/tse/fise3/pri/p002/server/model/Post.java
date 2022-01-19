@@ -1,7 +1,5 @@
 package fr.tse.fise3.pri.p002.server.model;
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
