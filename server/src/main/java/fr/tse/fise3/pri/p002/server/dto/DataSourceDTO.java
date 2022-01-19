@@ -2,61 +2,67 @@ package fr.tse.fise3.pri.p002.server.dto;
 
 import java.util.Date;
 
+import fr.tse.fise3.pri.p002.server.model.DataSource;
+
 public class DataSourceDTO {
-    private long total;
-    private long currentOffset;
-    private boolean status;
-    private Date createDate;
-    private Date modifyDate;
+	private long total;
+	// private long currentOffset;
+	private boolean status;
+	private Date createDate;
+	private Date modifyDate;
 
-    public DataSourceDTO() {
-    }
+	public DataSourceDTO() {
+	}
 
-    public DataSourceDTO(long total, long currentOffset, boolean status, Date createDate, Date modifyDate) {
-        this.total = total;
-        this.currentOffset = currentOffset;
-        this.status = status;
-        this.createDate = createDate;
-        this.modifyDate = modifyDate;
-    }
+	public DataSourceDTO(Integer mostRecentRequestYear, boolean status, Date createDate, Date modifyDate) {
+		this.status = status;
+		this.createDate = createDate;
+		this.modifyDate = modifyDate;
+	}
 
-    public Date getCreateDate() {
-        return createDate;
-    }
+	public DataSourceDTO(DataSource data, boolean status) {
+		this.status = status;
+		this.createDate = data.getCreateDate();
+		this.modifyDate = data.getModifyDate();
+		this.total = data.getTotal();
+	}
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+	public Date getCreateDate() {
+		return createDate;
+	}
 
-    public Date getModifyDate() {
-        return modifyDate;
-    }
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
-    public void setModifyDate(Date modifyDate) {
-        this.modifyDate = modifyDate;
-    }
+	public Date getModifyDate() {
+		return modifyDate;
+	}
 
-    public long getTotal() {
-        return total;
-    }
+	public void setModifyDate(Date modifyDate) {
+		this.modifyDate = modifyDate;
+	}
 
-    public void setTotal(long total) {
-        this.total = total;
-    }
+	public long getTotal() {
+		return total;
+	}
 
-    public long getCurrentOffset() {
-        return currentOffset;
-    }
+	public void setTotal(long total) {
+		this.total = total;
+	}
 
-    public void setCurrentOffset(long currentOffset) {
-        this.currentOffset = currentOffset;
-    }
+	/*
+	 * public long getCurrentOffset() { return currentOffset; }
+	 * 
+	 * public void setCurrentOffset(long currentOffset) { this.currentOffset =
+	 * currentOffset; }
+	 */
 
-    public boolean isStatus() {
-        return status;
-    }
+	public boolean isStatus() {
+		return status;
+	}
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
 }

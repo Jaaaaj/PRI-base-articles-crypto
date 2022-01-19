@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * The persistent class for the posts database table.
  */
@@ -14,154 +13,156 @@ import java.util.List;
 @Table(name = "posts")
 @NamedQuery(name = "Post.findAll", query = "SELECT p FROM Post p")
 public class Post implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "POST_ID")
-    private BigInteger postId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "POST_ID")
+	private BigInteger postId;
 
-    @Lob
-    private String address;
+	@Lob
+	private String address;
 
-    @Column(name = "BOOK_TITLE")
-    @Lob
-    private String bookTitle;
+	@Column(name = "BOOK_TITLE")
+	@Lob
+	private String bookTitle;
 
-    @Temporal(TemporalType.DATE)
-    private Date date;
+	@Temporal(TemporalType.DATE)
+	private Date date;
 
-    @Lob
-    private String title;
+	@Lob
+	private String title;
 
-    @Lob
-    private String url;
+	@Lob
+	private String url;
 
-    //bi-directional many-to-many association to Author
-    @ManyToMany
-    @JoinTable(
-            name = "posts_authors"
-            , joinColumns = {
-            @JoinColumn(name = "POST_ID")
-    }
-            , inverseJoinColumns = {
-            @JoinColumn(name = "AUTHOR_ID")
-    }
-    )
-    private List<Author> authors;
+	@Column(columnDefinition = "LONGTEXT")
+	private String abstract_;
 
-    //bi-directional many-to-many association to Category
-    @ManyToMany
-    @JoinTable(
-            name = "posts_catergories"
-            , joinColumns = {
-            @JoinColumn(name = "POST_ID")
-    }
-            , inverseJoinColumns = {
-            @JoinColumn(name = "CATEGORY_ID")
-    }
-    )
-    private List<Category> categories;
+	// bi-directional many-to-many association to Author
+	@ManyToMany
+	@JoinTable(name = "posts_authors", joinColumns = { @JoinColumn(name = "POST_ID") }, inverseJoinColumns = {
+			@JoinColumn(name = "AUTHOR_ID") })
+	private List<Author> authors;
 
-    //bi-directional many-to-many association to Keyword
-    @ManyToMany
-    @JoinTable(
-            name = "posts_keywords"
-            , joinColumns = {
-            @JoinColumn(name = "POST_ID")
-    }
-            , inverseJoinColumns = {
-            @JoinColumn(name = "KEYWORD_ID")
-    }
-    )
-    private List<Keyword> keywords;
+	// bi-directional many-to-many association to Category
+	@ManyToMany
+	@JoinTable(name = "posts_catergories", joinColumns = { @JoinColumn(name = "POST_ID") }, inverseJoinColumns = {
+			@JoinColumn(name = "CATEGORY_ID") })
+	private List<Category> categories;
 
-    //bi-directional many-to-one association to DataSource
-    @ManyToOne
-    @JoinColumn(name = "SOURCE_NAME")
-    private DataSource dataSource;
+	// bi-directional many-to-many association to Keyword
+	@ManyToMany
+	@JoinTable(name = "posts_keywords", joinColumns = { @JoinColumn(name = "POST_ID") }, inverseJoinColumns = {
+			@JoinColumn(name = "KEYWORD_ID") })
+	private List<Keyword> keywords;
 
+	// bi-directional many-to-one association to DataSource
+	@ManyToOne
+	@JoinColumn(name = "SOURCE_NAME")
+	private DataSource dataSource;
 
-    public Post() {
-    }
+	public Post() {
+	}
 
-    public BigInteger getPostId() {
-        return this.postId;
-    }
+	public Post(String bookTitle, Date date, String title, String url, String abstract_, List<Author> authors,
+			DataSource dataSource) {
+		super();
+		this.bookTitle = bookTitle;
+		this.date = date;
+		this.title = title;
+		this.url = url;
+		this.abstract_ = abstract_;
+		this.authors = authors;
+		this.dataSource = dataSource;
+	}
 
-    public void setPostId(BigInteger postId) {
-        this.postId = postId;
-    }
+	public BigInteger getPostId() {
+		return this.postId;
+	}
 
-    public String getAddress() {
-        return this.address;
-    }
+	public void setPostId(BigInteger postId) {
+		this.postId = postId;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public String getAddress() {
+		return this.address;
+	}
 
-    public String getBookTitle() {
-        return this.bookTitle;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public void setBookTitle(String bookTitle) {
-        this.bookTitle = bookTitle;
-    }
+	public String getBookTitle() {
+		return this.bookTitle;
+	}
 
-    public Date getDate() {
-        return this.date;
-    }
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public Date getDate() {
+		return this.date;
+	}
 
-    public String getTitle() {
-        return this.title;
-    }
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public String getTitle() {
+		return this.title;
+	}
 
-    public String getUrl() {
-        return this.url;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public String getUrl() {
+		return this.url;
+	}
 
-    public List<Author> getAuthors() {
-        return this.authors;
-    }
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
-    }
+	public List<Author> getAuthors() {
+		return this.authors;
+	}
 
-    public List<Category> getCategories() {
-        return this.categories;
-    }
+	public void setAuthors(List<Author> authors) {
+		this.authors = authors;
+	}
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
+	public List<Category> getCategories() {
+		return this.categories;
+	}
 
-    public List<Keyword> getKeywords() {
-        return this.keywords;
-    }
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
+	}
 
-    public void setKeywords(List<Keyword> keywords) {
-        this.keywords = keywords;
-    }
+	public List<Keyword> getKeywords() {
+		return this.keywords;
+	}
 
-    public DataSource getDataSource() {
-        return dataSource;
-    }
+	public void setKeywords(List<Keyword> keywords) {
+		this.keywords = keywords;
+	}
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public String getAbstract() {
+		return abstract_;
+	}
+
+	public void setAbstract(String abstract_) {
+		this.abstract_ = abstract_;
+	}
+
 }

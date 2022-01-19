@@ -12,20 +12,22 @@ import org.springframework.stereotype.Service;
 public class HalApiService {
 
     //@Qualifier("applicationTaskExecutor")
-    @Qualifier("threadPoolTsskExecutor")
+    //@Qualifier("threadPoolTsskExecutor")
     @Autowired
-
     private TaskExecutor taskExecutor;
 
     @Autowired
     private ApplicationContext applicationContext;
+    
+    @Autowired
+    HalApiRequestThread halApiRequestThread;
 
     public HalApiService() {
 
     }
 
     public void start(){
-        HalApiRequestThread halApiRequestThread = applicationContext.getBean(HalApiRequestThread.class);
+        //HalApiRequestThread halApiRequestThread = applicationContext.getBean(HalApiRequestThread.class);
         taskExecutor.execute(halApiRequestThread);
     }
 

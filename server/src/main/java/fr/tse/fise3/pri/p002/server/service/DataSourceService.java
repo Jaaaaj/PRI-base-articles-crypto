@@ -13,41 +13,46 @@ import java.util.Optional;
 @Service
 public class DataSourceService {
 
-    public static final String SOURCE_HAL = "hal";
-    public static final String SOURCE_EPRINT = "eprint";
+	public static final String SOURCE_HAL = "hal";
+	public static final String SOURCE_SEMANTIC_SCHOLAR = "semantic";
 
-    @Autowired
-    private DataSourceRepository dataSourceRepository;
+	@Autowired
+	private DataSourceRepository dataSourceRepository;
 
-    @Transactional(readOnly = false)
-    public void saveDataSource(DataSource dataSource) {
-        dataSourceRepository.save(dataSource);
-    }
+	@Transactional(readOnly = false)
+	public void saveDataSource(DataSource dataSource) {
+		dataSourceRepository.save(dataSource);
+	}
 
-    @Transactional(readOnly = true)
-    public Optional<DataSource> findByName(String name) {
-        return dataSourceRepository.findById(name);
-    }
+	@Transactional(readOnly = true)
+	public Optional<DataSource> findByName(String name) {
+		return dataSourceRepository.findById(name);
+	}
 
-    @Transactional(readOnly = true)
-    public boolean dataSourceExistsByName(String name) {
-        return dataSourceRepository.existsById(name);
-    }
+	@Transactional(readOnly = true)
+	public boolean dataSourceExistsByName(String name) {
+		return dataSourceRepository.existsById(name);
+	}
 
-    @Transactional(readOnly = true)
-    public DataSource getHalDataSource() {
-        return findByName(SOURCE_HAL).orElseThrow(() -> new ResourceNotFoundException("Hal source doesn't exit"));
-    }
+	@Transactional(readOnly = true)
+	public DataSource getHalDataSource() {
+		return findByName(SOURCE_HAL).orElseThrow(() -> new ResourceNotFoundException("Hal source doesn't exist."));
+	}
+	/*
+	 * @Transactional(readOnly = true) public DataSource getEPrintDataSource() {
+	 * return findByName(SOURCE_EPRINT).orElseThrow(() -> new
+	 * ResourceNotFoundException("EPrint source doesn't exit")); }
+	 */
 
-    @Transactional(readOnly = true)
-    public DataSource getEPrintDataSource() {
-        return findByName(SOURCE_EPRINT).orElseThrow(() -> new ResourceNotFoundException("EPrint source doesn't exit"));
-    }
+	@Transactional(readOnly = true)
+	public DataSource getSemanticDataSource() {
+		return findByName(SOURCE_SEMANTIC_SCHOLAR)
+				.orElseThrow(() -> new ResourceNotFoundException("Semantic Scholar source doesn't exist."));
+	}
 
-    @Transactional(readOnly = true)
-    public List<DataSource> findAllDataSources() {
-        return dataSourceRepository.findAll();
-    }
-
+	@Transactional(readOnly = true)
+	public List<DataSource> findAllDataSources() {
+		return dataSourceRepository.findAll();
+	}
 
 }
