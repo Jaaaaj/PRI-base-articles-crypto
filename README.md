@@ -1,18 +1,20 @@
-# PRI-base-articles-crypto
-Automatic generation and update of a list of post-quantum cryptography scientific publications
+# PRI-base-articles-crypto 2021/2022
+## Présentation du projet
+Nous sommes la troisième équipe à travailler sur ce sujet. Notre travail s'est appuyé sur l'application réalisée par le premier groupe qui a travaillé sur ce sujet que nous avons fiabilisé et dont nous avons étendu les fonctionnalités. Leur travail peut être consulté sur [leur github](https://github.com/RaphaelChevasson/PRI-base-articles-crypto).
 
-A Télécom Saint-Etienne project by Ahmed Khadraoui, Baptiste Wolff, Bianrafat Hassan, Darios Djimado and Raphael Chevasson  
-Client: Pierre-Louis Cayrel  
-Tutor: Christophe Gravier  
+Equipe étudiante: Amine BOUZID, Ruben FELICIANO, Jinda WU  
+Client: Pierre-Louis CAYREL  
+Tuteur: Christophe GRAVIER  
 
-# Features
+## Notre travail
+Les fonctionnalités que nous avons ajoutées au produit sont les suivantes :  
+* La connexion entre les boutons de l'interface et l'API du côté serveur (qui n'avait pas été fait avant, sans doute par manque de temps).  
+* L'ajout de nouvelles sources pour rechercher des publications. Pour cela, nous utilisons l'[API](https://www.semanticscholar.org/product/api) de [Semantic Scholar](https://www.semanticscholar.org/), un site regroupant les publications scientifiques provenant de pluiseurs sources, telles que ArXiv, IEEE ou IACR EPrint. Cela nous permet d'obtenir une plus grande variété d'articles avec une recherche.  
+* L'ajout de **mots clés** qui sont utilisés lors des requêtes de recherche d'article afin d'en affiner le résultat. Cela nous a permit de régler le principal problème qui nous a été remonté par rapport à l'application précédente, qui était le manque de précision des résultats (on récupérait tous les articles du site d'[Hal Inria](https://hal.inria.fr/), peut importait leur sujet).  
+* La mise en place d'un fichier de configuration (appelé *keywords.txt* présent dans */server/src/main/ressources*) qui permet à un utilisateur de lister des mots clés pertinents sur lesquelle il veut faire une recherche. Une recherche peut contenir plusieurs mots clés séparés pas un **+**. Pour recherche une expression exacte, il faudra entourer cette expression avec des **""**. Il est également possible d'avoir une liste de keywords (et de faire autant de recherches) en les séparant par une **virgule** et un **saut de ligne**.  
+* La possibilité d'exporter les articles présents dans notre base de données au format **Bibtex** depuis l'interface de l'application.
 
-This application aims to retrieve, update automatically and classify the scientific publications of cryptography in a database.  
-It also provide a web interface to browse and manage the publications.
-
-![](.github/web_list.png)
-
-# Installation
+# Tutoriel d'installation
 
 ## EITHER from binaries
 
