@@ -110,7 +110,7 @@ It allows you to start the extraction, or to reset the database
 
 To start the extraction, you click on the Start search button like in the picture down bellow :
 
-![](.github/web_admin_interface.png)
+![](.github/start.png)
 
 If you want to reset the database, you click on the Reset database button.
 
@@ -121,6 +121,8 @@ If you want to see the total number of the extracted posts,the creation date, th
 To see all the posts extracted you have to go to : http://localhost:4200/posts
 
 You will find a search form that allows you to filter depending on the Title, Author or Keywords. 
+
+![](.github/articles.png)
 
 You can also export the article metada as a BibTex file:
 
@@ -163,16 +165,6 @@ Go to : http://localhost:4200/admin/edit
 You will have the list of all the posts and you can edit or delete them.
 
   
-
-# How it works
-
-  
-
-Here is a little diagram showing essential bricks of the project, the main technology they use, and how they connect together:
-
-  
-
-![](.github/diagram.png)
 
   
 
