@@ -99,7 +99,7 @@ Finally on your browser go to : http://localhost:4200/
   
 --------------------------------------
 
-# Machine Learning (old version - Not tested)
+# Running the application
 
 **The following instruction are from the 2018-2019 original project. This part has not been tested or fixed.**
 
