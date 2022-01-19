@@ -132,38 +132,10 @@ You can also export the article metada as a BibTex file:
   
   
 
-### Setup Classification
+### Machine Learning
 
   
-
-Follow the setup steps in [the classification readme](Classification/readme.md)
-
-  
-
-# Usage
-
-  
-
-## Launch the Extraction-Classification-Storage pipeline
-
-  
-
-Launch `launch_pipeline.sh` on a terminal. If you are on windows, lauch it using [git bash](https://gitforwindows.org/)
-
-  
-
-## Browse the list
-
-  
-
-## Use the administration interface
-
-  
-
-Go to : http://localhost:4200/admin/edit
-
-You will have the list of all the posts and you can edit or delete them.
-
+We have not implemented machine learning and automatic classification in this project. There are still artefacts from the 2018-2019 project in the directories *CLassification*, *DATA_BASE_MODEL* and *luna>
   
 
   
