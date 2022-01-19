@@ -2,12 +2,16 @@ package fr.tse.fise3.pri.p002.server.pojo.SemanticAPI;
 
 import java.util.List;
 
+/**
+ * Objet qui correspond au format d'une reponse complete venant de l'API de
+ * Semantic Scholar.
+ */
 public class SemanticResponse {
 
-	private Long total;
-	private Long offset;
-	private Long next;
-	private List<SemanticDocs> data;
+	private Long total; // Nombre total d'articles qui correspondent a la recherche
+	private Long offset; // Indice du depart de notre recherche
+	private Long next; // Nombre d'articles retournes
+	private List<SemanticDocs> data; // Liste de articles
 
 	public SemanticResponse() {
 

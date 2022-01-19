@@ -29,15 +29,14 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
+/**
+ * Controlleur de l'application : contient tous les endpoints de l'API.
+ */
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class HomeController {
-	/*
-	 * @Autowired private EPrintPostProducerService EPrintPostProducerService;
-	 * 
-	 * @Autowired private EPrintPostConsumerService EPrintPostConsumerService;
-	 */
+
 	private ModelMapper modelMapper = new ModelMapper();
 	@Autowired
 	private PostService postService;
@@ -75,12 +74,31 @@ public class HomeController {
 		modelMapper.createTypeMap(Post.class, PostDTO.class).setConverter(converter);
 	}
 
+	/**
+	 * Permet de recuperer tous les articles de la base de donnees dans un objet
+	 * Page.
+	 * 
+	 * @param page Le nombre de pages attendues
+	 * @param size Le nombre d'articles par page
+	 * @return Un objet page conteant les page*size premiers articles de la database
+	 */
 	@GetMapping("/posts")
 	public Page<PostDTO> findAllPosts(@RequestParam int page, @RequestParam int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return postService.findAllPosts(pageable).map(post -> modelMapper.map(post, PostDTO.class));
 	}
 
+	/**
+	 * Permet de rechercher des articles selon un champ et les retourne au format
+	 * Page.
+	 * 
+	 * @param tag   Le champ sur lequel on veut faire la recherche (titre, auteur ou
+	 *              keywords)
+	 * @param value La String contenant le texte a recherher
+	 * @param page  Le nombre de pages attendus (pour l'attribut Page)
+	 * @param size  Le nombre d'articles par page (pour l'attribut Page)
+	 * @return Un objet Page contenant page*size articles retournes par la recherche
+	 */
 	@GetMapping("/posts/search")
 	public Page<PostDTO> findPostsByTileLike(@RequestParam String tag, @RequestParam String value,
 			@RequestParam int page, @RequestParam int size) {
@@ -100,35 +118,42 @@ public class HomeController {
 		}
 	}
 
+	/**
+	 * Permet de recuperer des informations sur la source Hal Inria (nombre
+	 * d'articles trouves & statut de la recherche (en train de faire une recherche
+	 * ou inactif))
+	 * 
+	 * @return Le statut de Hal Inria
+	 */
 	@GetMapping("/hal/info")
 	public DataSourceDTO getHalSourceInfo() {
 		DataSource halDataSource = dataSourceService.getHalDataSource();
 		return new DataSourceDTO(halDataSource, HalApiRequestThread.isRunning());
 	}
 
+	/**
+	 * Permet de recuperer des informations sur la source Semantic Scholar (nombre
+	 * d'articles trouves & statut de la recherche (en train de faire une recherche
+	 * ou inactif))
+	 * 
+	 * @return Le statut de Semantic Scholar
+	 */
 	@GetMapping("/semantic/info")
 	public DataSourceDTO getSemanticSourceInfo() {
-
-		DataSource ePrintDataSource = dataSourceService.getSemanticDataSource();
-
-		DataSourceDTO dataSourceDTO = new DataSourceDTO();
-		dataSourceDTO.setTotal(ePrintDataSource.getTotal());
-		dataSourceDTO.setCreateDate(ePrintDataSource.getCreateDate());
-		dataSourceDTO.setModifyDate(ePrintDataSource.getModifyDate()); //
-		dataSourceDTO.setStatus(SemanticApiRequestThread.isRunning());
-
-		return dataSourceDTO;
+		DataSource semanticDataSource = dataSourceService.getSemanticDataSource();
+		return new DataSourceDTO(semanticDataSource, SemanticApiRequestThread.isRunning());
 	}
 
+	/**
+	 * Lance l'execution des threads charges de faire des requetes pour recuperer de
+	 * nouveaux articles.
+	 * 
+	 * @return Le statut de la recherche
+	 */
 	@GetMapping("/start")
 	public String start() {
 
 		if (!HalApiRequestThread.isRunning()) {
-			BlockingQueue<Post> postBlockingQueue = new ArrayBlockingQueue<Post>(100);
-			// Thread postProducerThread = new Thread(EPrintPostProducerService);
-			// Thread postConsumerThread = new Thread(EPrintPostConsumerService);
-			// postProducerThread.start();
-			// postConsumerThread.start();
 			this.semanticApiService.start();
 			halApiService.start();
 			return "Start";
@@ -137,6 +162,12 @@ public class HomeController {
 		}
 	}
 
+	/**
+	 * Permet de recuperer une liste de tous les articles dans notre base de
+	 * donnees.
+	 * 
+	 * @return Une liste de tous les articles present en local
+	 */
 	@GetMapping("/allposts")
 	public List<PostDTO> getAllPosts() {
 		ArrayList<PostDTO> response = new ArrayList<PostDTO>();
@@ -146,6 +177,9 @@ public class HomeController {
 		return response;
 	}
 
+	/**
+	 * Permet de vider completement la base de donnees.
+	 */
 	@DeleteMapping("/delete")
 	public String delete() {
 		authorRepository.deleteAll();

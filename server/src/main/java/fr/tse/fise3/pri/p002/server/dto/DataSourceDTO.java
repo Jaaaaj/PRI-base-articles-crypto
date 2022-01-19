@@ -4,6 +4,9 @@ import java.util.Date;
 
 import fr.tse.fise3.pri.p002.server.model.DataSource;
 
+/**
+ * Data Transfert Object de notre classe DataSource
+ */
 public class DataSourceDTO {
 	private long total;
 	// private long currentOffset;
@@ -50,13 +53,6 @@ public class DataSourceDTO {
 	public void setTotal(long total) {
 		this.total = total;
 	}
-
-	/*
-	 * public long getCurrentOffset() { return currentOffset; }
-	 * 
-	 * public void setCurrentOffset(long currentOffset) { this.currentOffset =
-	 * currentOffset; }
-	 */
 
 	public boolean isStatus() {
 		return status;

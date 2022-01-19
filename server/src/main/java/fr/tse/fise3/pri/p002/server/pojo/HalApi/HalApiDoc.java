@@ -4,18 +4,22 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Objet qui correspond a 1 article au format d'une response a une requete a
+ * l'API de Hal Inria.
+ */
 public class HalApiDoc {
 
-	private String label_s;
-	private List<String> title_s;
-	private List<String> abstract_s;
-	private List<String> authAlphaLastNameFirstNameIdHal_fs;
-	private String uri_s;
-	private String journalTitle_s;
-	private String bookTitle_s;
-	private String conferenceTitle_s;
-	private List<String> keyword_s;
-	private Date submittedDate_tdate;
+	private String label_s; // Informations generales
+	private List<String> title_s; // Titre
+	private List<String> abstract_s; // Resume
+	private List<String> authAlphaLastNameFirstNameIdHal_fs; // Auteurs
+	private String uri_s; // Url vers la publication
+	private String journalTitle_s; // Journal source de la publication
+	private String bookTitle_s; // Livre source de la publication
+	private String conferenceTitle_s; // Conference source de la publication
+	private List<String> keyword_s; // Mots cles
+	private Date submittedDate_tdate; // Date de parution
 
 	public HalApiDoc() {
 	}

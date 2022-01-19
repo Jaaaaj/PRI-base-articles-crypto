@@ -5,36 +5,34 @@ import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.List;
 
-
 /**
  * The persistent class for the categories database table.
- * 
  */
 @Entity
-@Table(name="categories")
-@NamedQuery(name="Category.findAll", query="SELECT c FROM Category c")
+@Table(name = "categories")
+@NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c")
 public class Category implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="CATEGORY_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "CATEGORY_ID")
 	private BigInteger categoryId;
 
-	@Column(name="CATEGORY_NAME")
+	@Column(name = "CATEGORY_NAME")
 	private String categoryName;
 
-	//bi-directional many-to-one association to Category
+	// bi-directional many-to-one association to Category
 	@ManyToOne
-	@JoinColumn(name="SUBCATEGORY_ID")
+	@JoinColumn(name = "SUBCATEGORY_ID")
 	private Category category;
 
-	//bi-directional many-to-one association to Category
-	@OneToMany(mappedBy="category")
+	// bi-directional many-to-one association to Category
+	@OneToMany(mappedBy = "category")
 	private List<Category> categories;
 
-	//bi-directional many-to-many association to Post
-	@ManyToMany(mappedBy="categories")
+	// bi-directional many-to-many association to Post
+	@ManyToMany(mappedBy = "categories")
 	private List<Post> posts;
 
 	public Category() {

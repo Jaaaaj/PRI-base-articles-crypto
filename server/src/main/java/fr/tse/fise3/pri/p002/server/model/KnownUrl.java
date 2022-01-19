@@ -4,23 +4,21 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import javax.persistence.*;
 
-
 /**
  * The persistent class for the known_urls database table.
- * 
  */
 @Entity
-@Table(name="known_urls")
-@NamedQuery(name="KnownUrl.findAll", query="SELECT k FROM KnownUrl k")
+@Table(name = "known_urls")
+@NamedQuery(name = "KnownUrl.findAll", query = "SELECT k FROM KnownUrl k")
 public class KnownUrl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="URL_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "URL_ID")
 	private BigInteger urlId;
 
-	@Column(name="URL_NAME")
+	@Column(name = "URL_NAME")
 	@Lob
 	private String urlName;
 

@@ -9,12 +9,12 @@ import java.math.BigInteger;
 
 public interface PostRepository extends JpaRepository<Post, BigInteger> {
 
-    boolean existsByUrl(String url);
+	boolean existsByUrl(String url);
 
-    Page<Post> findByTitleContaining(String title, Pageable pageable);
+	Page<Post> findByTitleContaining(String title, Pageable pageable);
 
-    Page<Post> findByAuthors_authorNameContaining(String name, Pageable pageable);
+	Page<Post> findByAuthors_authorNameContaining(String name, Pageable pageable);
 
-    Page<Post> findByKeywords_keywordNameContaining(String title, Pageable pageable);
+	Page<Post> findByKeywords_keywordNameContaining(String title, Pageable pageable);
 
 }

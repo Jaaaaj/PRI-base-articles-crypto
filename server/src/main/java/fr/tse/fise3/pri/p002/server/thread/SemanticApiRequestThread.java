@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -28,6 +27,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * Thread qui s'occupe des requetes et de la recuperation des donnees en
+ * provenance de l'API de Semantic Scholar.
+ */
 @Component
 public class SemanticApiRequestThread implements Runnable {
 
@@ -50,6 +53,13 @@ public class SemanticApiRequestThread implements Runnable {
 		this.okHttpClient = new OkHttpClient();
 	}
 
+	/**
+	 * Envoie une requete a l'API de Semantic Scholar
+	 * 
+	 * @param query La requete
+	 * @return Le resultat de la recherche (String au format Json)
+	 * @throws IOException
+	 */
 	private String doRequest(String query) throws IOException {
 		Request req = new Request.Builder().url(query).build();
 
@@ -58,6 +68,16 @@ public class SemanticApiRequestThread implements Runnable {
 		}
 	}
 
+	/**
+	 * Sauvegarde un article au format retourne par l'API de Semantic Scholar dans
+	 * notre base de donnees. Pour cela, on doit le convertir en Post (notre format
+	 * pour stocker les articles dans la database).
+	 * 
+	 * @param doc Une publication venant de Semantic Scholar
+	 * @return Un int : 0 si l'enregistrement est réussi ou 1 si l'article est deja
+	 *         present dans la database (cela nous permet de compter combien
+	 *         d'articles sont reelement inseres dans la database)
+	 */
 	private Integer saveArticle(SemanticDocs doc) {
 
 		if (this.postService.findPostByTitleLike(doc.getTitle(), PageRequest.of(1, 10)).getTotalElements() > 0) {
@@ -88,6 +108,12 @@ public class SemanticApiRequestThread implements Runnable {
 		return 0;
 	}
 
+	/**
+	 * Permet de mettre a jour les informations sur le statut des recherches sur
+	 * l'API de Semantic Scholar.
+	 * 
+	 * @param total Le nombre total de publications uniques trouvees via cette API
+	 */
 	private void updateSemanticDataSource(long total) {
 		DataSource semanticDataSource = dataSourceService.getSemanticDataSource();
 		semanticDataSource.setTotal(total);
@@ -95,6 +121,14 @@ public class SemanticApiRequestThread implements Runnable {
 
 	}
 
+	/**
+	 * Lit une liste de mots cles pour les recherches contenus dans un fichier.
+	 * 
+	 * @param inputStream Flux de lecture (qui pointe vers un fichier, ici un txt)
+	 * @return Un String qui contient le contenu du fichier (des mots cles) separes
+	 *         par une virgule et un saut de ligne (\n)
+	 * @throws IOException
+	 */
 	private String readFromInputStream(InputStream inputStream) throws IOException {
 		StringBuilder resultStringBuilder = new StringBuilder();
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {

@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * CommandLineRunner qui se lance a chaque demarrage de l'application. Cree les
+ * DataSources pour Hal Inria et Semantic Scholar si elles n'existent pas.
+ */
 @Configuration
 public class DataSourceConfig implements CommandLineRunner {
 
