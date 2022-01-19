@@ -10,10 +10,6 @@
       <button (click)="start()" class="btn btn-primary mr-2"><i class=" material-icons">
           play_circle_outline</i></button>
     </div>
-    <div class="my-3">
-      Restart and clean databse
-      <button class="btn btn-danger"><i class=" material-icons"> settings_backup_restore</i></button>
-    </div>
   </div>
 
 </div>
@@ -28,10 +24,9 @@
       Try to continue from offset
       <button class="btn btn-primary mr-2"><i class=" material-icons"> play_circle_outline</i></button>
     </div>
-    <div class="my-3">
-      Restart
-      <button class="btn btn-danger"><i class=" material-icons"> settings_backup_restore</i></button>
-    </div>
   </div>
-
+</div>
+<div class="card my-3">
+  <p style="align-self: center;" class="card-title alert alert-danger">Reset database</p>
+  <button class="btn btn-danger" (click)="delete()"><i class=" material-icons"> settings_backup_restore</i></button>
 </div>

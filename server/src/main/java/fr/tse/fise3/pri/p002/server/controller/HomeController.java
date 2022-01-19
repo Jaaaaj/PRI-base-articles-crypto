@@ -6,6 +6,9 @@ import fr.tse.fise3.pri.p002.server.model.Author;
 import fr.tse.fise3.pri.p002.server.model.DataSource;
 import fr.tse.fise3.pri.p002.server.model.Keyword;
 import fr.tse.fise3.pri.p002.server.model.Post;
+import fr.tse.fise3.pri.p002.server.repository.AuthorRepository;
+import fr.tse.fise3.pri.p002.server.repository.DataSourceRepository;
+import fr.tse.fise3.pri.p002.server.repository.PostRepository;
 import fr.tse.fise3.pri.p002.server.service.*;
 import fr.tse.fise3.pri.p002.server.thread.HalApiRequestThread;
 import org.modelmapper.Converter;
@@ -15,11 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -45,7 +44,18 @@ public class HomeController {
 	@Autowired
 	private DataSourceService dataSourceService;
 
+	@Autowired
+	private AuthorRepository authorRepository;
+
+	@Autowired
+	private PostRepository postRepository;
+
+	@Autowired
+	private DataSourceRepository datasetRepository;
+
+
 	private Converter<Post, PostDTO> converter;
+
 
 	public HomeController() {
 		converter = context -> {
@@ -121,11 +131,34 @@ public class HomeController {
 			this.semanticApiService.start();
 			halApiService.start();
 			return "Start";
-
 		} else {
 			return "is already running";
 		}
-
 	}
 
+	@DeleteMapping("/delete")
+	public String delete(){
+		authorRepository.deleteAll();
+		postRepository.deleteAll();
+		datasetRepository.deleteAll();
+
+		if (!dataSourceService.dataSourceExistsByName(DataSourceService.SOURCE_HAL)) {
+			// Add HAL API to resource entry
+			DataSource halDataSource = new DataSource();
+			halDataSource.setName(DataSourceService.SOURCE_HAL);
+			//halDataSource.setCurrentOffset(0);
+			halDataSource.setTotal(0);
+			dataSourceService.saveDataSource(halDataSource);
+		}
+
+		if (!dataSourceService.dataSourceExistsByName(DataSourceService.SOURCE_EPRINT)) {
+			// Add E print to resource entry
+			DataSource ePrintDataSource = new DataSource();
+			ePrintDataSource.setName(DataSourceService.SOURCE_EPRINT);
+			//ePrintDataSource.setCurrentOffset(0);
+			ePrintDataSource.setTotal(0);
+			dataSourceService.saveDataSource(ePrintDataSource);
+		}
+		return "deleted";
+	}
 }
