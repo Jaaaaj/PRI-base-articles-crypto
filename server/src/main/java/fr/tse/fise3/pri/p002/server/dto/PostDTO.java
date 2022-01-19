@@ -18,6 +18,15 @@ public class PostDTO {
 
 	private List<String> authors;
 	private List<String> keywords;
+	private String book_title;
+
+	public String getBook_title() {
+		return book_title;
+	}
+
+	public void setBook_title(String book_title) {
+		this.book_title = book_title;
+	}
 
 	public PostDTO() {
 	}
@@ -31,9 +40,10 @@ public class PostDTO {
 		p.getAuthors().forEach(author -> this.authors.add(author.getAuthorName()));
 		this.keywords = new ArrayList<String>();
 		p.getKeywords().forEach(key -> this.keywords.add(key.getKeywordName()));
+		this.book_title = p.getBookTitle();
 	}
 
-	public PostDTO(String address, Date date, String title, String url, List<String> author, List<String> keywords) {
+	public PostDTO(String address, Date date, String title, String url, List<String> author, List<String> keywords,String book_title) {
 		super();
 		this.address = address;
 		this.date = date;
@@ -41,6 +51,7 @@ public class PostDTO {
 		this.url = url;
 		this.authors = author;
 		this.keywords = keywords;
+		this.book_title = book_title;
 	}
 
 	public List<String> getKeywords() {

@@ -11,7 +11,7 @@ import { DataSourceInfoModel } from 'src/app/models/hal-info.model';
 export class AdminDashboardComponent implements OnInit {
 
   public halInfo: DataSourceInfoModel;
-  public eprintInfo: DataSourceInfoModel;
+  public semanticInfo: DataSourceInfoModel;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -25,6 +25,17 @@ export class AdminDashboardComponent implements OnInit {
         // handle error
         console.error(error);
       });
+
+    this.httpClient.get('/api/semantic/info').subscribe(
+      (response: DataSourceInfoModel) => {
+        this.semanticInfo = response;
+        console.log(response);
+
+      }, (error) => {
+        // handle error
+        console.error(error);
+      });
+
   }
 
 
