@@ -25,16 +25,6 @@ export class AdminDashboardComponent implements OnInit {
         // handle error
         console.error(error);
       });
-
-    // this.httpClient.get('/api/eprint/info').subscribe(
-    //   (response: DataSourceInfoModel) => {
-    //     this.eprintInfo = response;
-    //     console.log(response);
-
-    //   }, (error) => {
-    //     // handle error
-    //     console.error(error);
-    //   });
   }
 
 

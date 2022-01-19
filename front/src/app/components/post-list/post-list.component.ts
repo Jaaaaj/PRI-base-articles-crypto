@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-post-list',
@@ -67,4 +68,26 @@ export class PostListComponent implements OnInit {
     this.search(this.searchForm);
   }
 
+  generateBibtex() {
+    var text = "";
+    for (let element of this.postList) {
+
+      text += ("@book{" + element.bookTitle + "," + "\n")
+      text += ("author=\"" + element.authors + "\n" + ",")
+      text += ("title=\"" + element.title + "\n" + ",")
+      text += ("year=" + element.date)
+      text += ("}")
+      text += ("")
+      text += ("\n")
+    }
+    console.log(text);
+    new Blob([text], { type: 'text/plain' });
+    const blob =
+      new Blob([
+        text],
+        { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "test.txt");
+  }
+
 }
+
