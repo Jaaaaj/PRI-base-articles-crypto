@@ -124,15 +124,15 @@ You will find a search form that allows you to filter depending on the Title, Au
 
 ![](.github/articles.png)
 
-You can also export the article metada as a BibTex file:
+You can also export the articles metada as a BibTex file:
 
  - The button ***Export All Posts To Bibtex*** will export all existing articles in the database
  - The button ***Export this page to BibTex*** will only export the current page articles
 
   
-  
+------------------
 
-### Machine Learning
+# Machine Learning
 
   
 We have not implemented machine learning and automatic classification in this project. There are still artefacts from the 2018-2019 project in the directories *CLassification*, *DATA_BASE_MODEL* and *luna>
