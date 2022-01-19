@@ -1,15 +1,21 @@
 <div class="card my-3">
+  <div style="display: flex;flex-direction: row;align-items: center;">
+    <button style="margin:5px;display: flex;flex-direction: row;align-items: center;justify-content: center;"
+      (click)="start()" class="btn btn-success btn-block"><i class=" material-icons">
+        play_circle_outline</i>Start search</button>
+    <button style="margin:5px;display: flex;flex-direction: row;align-items: center;justify-content: center;"
+      (click)="delete()" class="btn btn-warning btn-block"><i class=" material-icons">
+        delete_forever</i>Reset database</button>
+  </div>
+</div>
+<div class="card my-3">
   <div class="card-body">
     <p class="card-title alert alert-primary">HAL API</p>
     <p>Creation date: <strong>{{ halInfo?.createDate | date:'dd-MM-yyyy HH:MM:ss' }}</strong></p>
     <p>Last updated date: <strong>{{ halInfo?.modifyDate | date:'dd-MM-yyyy HH:MM:ss' }}</strong></p>
     <p>Total: <strong>{{ halInfo?.total }}</strong> </p>
-    <p>Status: <strong> {{ halInfo?.status }} </strong> </p>
-    <div>
-      Start
-      <button (click)="start()" class="btn btn-primary mr-2"><i class=" material-icons">
-          play_circle_outline</i></button>
-    </div>
+    <p>Running: <strong> {{ halInfo?.status }} </strong> </p>
+
   </div>
 
 </div>
@@ -17,16 +23,10 @@
 <div class="card my-3">
   <div class="card-body">
     <p class="card-title alert alert-primary">Semantic Scholar</p>
-    <p>Last updated date: <strong>{{ eprintInfo?.modifyDate }}</strong></p>
-    <p>Total: <strong>{{ eprintInfo?.total }}</strong> </p>
-    <p>Status: <strong> {{ eprintInfo?.status }} </strong> </p>
-    <div>
-      Try to continue from offset
-      <button class="btn btn-primary mr-2"><i class=" material-icons"> play_circle_outline</i></button>
-    </div>
+    <p>Creation date: <strong>{{ semanticInfo?.createDate | date:'dd-MM-yyyy HH:MM:ss' }}</strong></p>
+    <p>Last updated date: <strong>{{ semanticInfo?.modifyDate | date:'dd-MM-yyyy HH:MM:ss'}}</strong></p>
+    <p>Total: <strong>{{ semanticInfo?.total }}</strong> </p>
+    <p>Running: <strong> {{ semanticInfo?.status }} </strong> </p>
+
   </div>
-</div>
-<div class="card my-3">
-  <p style="align-self: center;" class="card-title alert alert-danger">Reset database</p>
-  <button class="btn btn-danger" (click)="delete()"><i class=" material-icons"> settings_backup_restore</i></button>
 </div>
