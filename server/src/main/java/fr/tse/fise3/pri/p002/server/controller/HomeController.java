@@ -11,6 +11,8 @@ import fr.tse.fise3.pri.p002.server.repository.DataSourceRepository;
 import fr.tse.fise3.pri.p002.server.repository.PostRepository;
 import fr.tse.fise3.pri.p002.server.service.*;
 import fr.tse.fise3.pri.p002.server.thread.HalApiRequestThread;
+import fr.tse.fise3.pri.p002.server.thread.SemanticApiRequestThread;
+
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
@@ -53,9 +57,7 @@ public class HomeController {
 	@Autowired
 	private DataSourceRepository datasetRepository;
 
-
 	private Converter<Post, PostDTO> converter;
-
 
 	public HomeController() {
 		converter = context -> {
@@ -104,20 +106,19 @@ public class HomeController {
 		return new DataSourceDTO(halDataSource, HalApiRequestThread.isRunning());
 	}
 
-	/*
-	 * @GetMapping("/eprint/info") public DataSourceDTO getEPrintSourceInfo() {
-	 * 
-	 * DataSource ePrintDataSource = dataSourceService.getEPrintDataSource();
-	 * 
-	 * DataSourceDTO dataSourceDTO = new DataSourceDTO();
-	 * dataSourceDTO.setTotal(ePrintDataSource.getTotal());
-	 * dataSourceDTO.setCurrentOffset(ePrintDataSource.getCurrentOffset());
-	 * dataSourceDTO.setCreateDate(ePrintDataSource.getCreateDate());
-	 * dataSourceDTO.setModifyDate(ePrintDataSource.getModifyDate()); //
-	 * dataSourceDTO.setStatus(HalApiRequestThread.isRunning());
-	 * 
-	 * return dataSourceDTO; }
-	 */
+	@GetMapping("/semantic/info")
+	public DataSourceDTO getSemanticSourceInfo() {
+
+		DataSource ePrintDataSource = dataSourceService.getSemanticDataSource();
+
+		DataSourceDTO dataSourceDTO = new DataSourceDTO();
+		dataSourceDTO.setTotal(ePrintDataSource.getTotal());
+		dataSourceDTO.setCreateDate(ePrintDataSource.getCreateDate());
+		dataSourceDTO.setModifyDate(ePrintDataSource.getModifyDate()); //
+		dataSourceDTO.setStatus(SemanticApiRequestThread.isRunning());
+
+		return dataSourceDTO;
+	}
 
 	@GetMapping("/start")
 	public String start() {
@@ -136,8 +137,17 @@ public class HomeController {
 		}
 	}
 
+	@GetMapping("/allposts")
+	public List<PostDTO> getAllPosts() {
+		ArrayList<PostDTO> response = new ArrayList<PostDTO>();
+
+		this.postRepository.findAll().forEach(post -> response.add(new PostDTO(post)));
+
+		return response;
+	}
+
 	@DeleteMapping("/delete")
-	public String delete(){
+	public String delete() {
 		authorRepository.deleteAll();
 		postRepository.deleteAll();
 		datasetRepository.deleteAll();
@@ -146,18 +156,18 @@ public class HomeController {
 			// Add HAL API to resource entry
 			DataSource halDataSource = new DataSource();
 			halDataSource.setName(DataSourceService.SOURCE_HAL);
-			//halDataSource.setCurrentOffset(0);
+			// halDataSource.setCurrentOffset(0);
 			halDataSource.setTotal(0);
 			dataSourceService.saveDataSource(halDataSource);
 		}
 
-		if (!dataSourceService.dataSourceExistsByName(DataSourceService.SOURCE_EPRINT)) {
+		if (!dataSourceService.dataSourceExistsByName(DataSourceService.SOURCE_SEMANTIC_SCHOLAR)) {
 			// Add E print to resource entry
-			DataSource ePrintDataSource = new DataSource();
-			ePrintDataSource.setName(DataSourceService.SOURCE_EPRINT);
-			//ePrintDataSource.setCurrentOffset(0);
-			ePrintDataSource.setTotal(0);
-			dataSourceService.saveDataSource(ePrintDataSource);
+			DataSource semanticDataSource = new DataSource();
+			semanticDataSource.setName(DataSourceService.SOURCE_SEMANTIC_SCHOLAR);
+			// ePrintDataSource.setCurrentOffset(0);
+			semanticDataSource.setTotal(0);
+			dataSourceService.saveDataSource(semanticDataSource);
 		}
 		return "deleted";
 	}
