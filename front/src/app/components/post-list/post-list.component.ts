@@ -78,7 +78,7 @@ export class PostListComponent implements OnInit {
     console.log
     for (let element of this.postList) {
       console.log(element.bookTitle)
-      text += ("@book{" + element.bookTitle + "," + "\n")
+      text += ("@book{" + element.book_title + "," + "\n")
       text += ("author={" + element.authors.toString().replace(/[{]/gm, "\\{") + "}" + "\n" + ",")
       text += ("title={" + element.title.toString().replace(/[{]/gm, "\\{") + "}" + "\n" + ",")
       text += ("year={" + element.date + "}")
