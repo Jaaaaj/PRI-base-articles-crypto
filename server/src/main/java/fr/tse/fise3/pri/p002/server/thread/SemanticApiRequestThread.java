@@ -164,7 +164,7 @@ public class SemanticApiRequestThread implements Runnable {
 			for (String keyword : keyword_list) {
 				do {
 					String response = this.doRequest(
-							"https://api.semanticscholar.org/graph/v1/paper/search?query=code+based+cryptography&offset="
+							"https://api.semanticscholar.org/graph/v1/paper/search?query="+keyword+"&offset="
 									+ this.offset + "&limit=" + this.limit
 									+ "&fields=title,authors,year,url,abstract,venue");
 
